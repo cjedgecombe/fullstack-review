@@ -9,15 +9,15 @@ let getReposByUsername = (username) => {
   // but you'll have to fill in the URL
   let options = {
     method: 'get',
-    url:  `https://api.github.com/users/${username}/repos`,
+    url: `https://api.github.com/users/${username}/repos`,
     headers: {
       'User-Agent': 'request',
       'Authorization': `token ${config.TOKEN}`
     }
   };
 
-  axios(options);
-  // will need to add .then clause later
+
+  return axios(options);
 
 }
 
