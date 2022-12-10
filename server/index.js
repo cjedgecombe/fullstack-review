@@ -25,12 +25,6 @@ app.post('/repos', async function (req, res) {
 
   var username = req.body.username;
 
-  // console.log('this should be the entered username', Object.keys(req.body));
-
-  // var username = Object.keys(req.body);
-
-  // console.log('request*****', req);
-
   var repoData = await getReposByUsername(username);
 
   var reposSaved = await db.save(repoData.data);

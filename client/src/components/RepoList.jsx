@@ -11,7 +11,7 @@ const RepoList = (props) => {
     <ol>
       {props.repos.map((repo) => {
         return <li key={repo.githubID}>
-          <a href={repo.url}>{repo.name}</a> by <a href={repo.owner.url}>{repo.owner.name}</a> with {repo.forks} forks</li>
+          <a href={repo.url} target="_blank">{repo.name}</a> by <a href={repo.owner.url} target="_blank">{repo.owner.name}</a> with {repo.forks} forks</li>
       })}
     </ol>
   </div>

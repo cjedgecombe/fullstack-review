@@ -16,6 +16,10 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    this.getRepos();
+  }
+
+  getRepos () {
     axios.get('http://localhost:1128/repos')
     .then((top25Repos) => {
       this.setState({repos: top25Repos.data});
@@ -27,7 +31,7 @@ class App extends React.Component {
 
     axios.post('http://localhost:1128/repos', {username: term})
     .then(() => {
-      console.log('');
+      this.getRepos();
     })
   }
 

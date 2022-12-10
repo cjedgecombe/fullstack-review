@@ -17,8 +17,8 @@ let repoSchema = mongoose.Schema({
 let Repo = mongoose.model('Repo', repoSchema);
 
 // const test = async function() {
-//   // var test = await Repo.deleteMany({ githubID: 531990231 });
-//   var test = await Repo.find();
+//   var test = await Repo.deleteMany();
+//   // var test = await Repo.find();
 //   console.log(test);
 // }
 
