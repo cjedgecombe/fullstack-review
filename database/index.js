@@ -16,54 +16,64 @@ let repoSchema = mongoose.Schema({
 
 let Repo = mongoose.model('Repo', repoSchema);
 
-let save = (userRepos) => {
-  // TODO: Your code here
-  // This function should save a repo or repos to
-  // the MongoDB
+// const test = async function() {
+//   // var test = await Repo.deleteMany({ githubID: 531990231 });
+//   var test = await Repo.find();
+//   console.log(test);
+// }
 
-  // MAYBE NEED TO REFACTOR TO RETURN A PROMISE
+// test();
 
-  return new Promise((resolve) => {
+let save = async (userRepos) => {
 
-    // iterate through the array of returned repos
-    for (var currentRepo of userRepos) {
-      var currentID = currentRepo.id;
-      // query the database for the current repo's githubID
-      Repo.exists({ githubID: currentID })
-      .then((repoID) => {
-        // if the query is successful, the current repo already exists and should not be saved
-        if (repoID) {
-          console.log(`Repo ID ${repoID} already exists in the database`);
-        // if the query fails, the current repo does not exist and should be saved
-        } else {
-          // create a new Repo instance, assigning all the relevant values to their appropriate fields
-          var newDocument = new Repo({
-            githubID: currentID,
-            name: currentRepo.name,
-            url: currentRepo.html_url,
-            forks: currentRepo.forks,
-            owner: {
-              name: currentRepo.owner.login,
-              url: currentRepo.owner.html_url
-            }
-          })
-        // save the new instance to the database
-          newDocument.save()
-          .then(() => {
-            console.log('Document saved sucessfully');
-          })
-          .catch(() => {
-            console.log('ERROR SAVING DOCUMENT');
-          })
+  var reposSaved = 0;
+
+  for (var currentRepo of userRepos) {
+
+    var currentID = currentRepo.id;
+
+    const repoExists = await Repo.exists({ githubID: currentID});
+
+    if (repoExists === null) {
+
+      var newDocument = new Repo({
+      githubID: currentID,
+      name: currentRepo.name,
+      url: currentRepo.html_url,
+      forks: currentRepo.forks,
+      owner: {
+        name: currentRepo.owner.login,
+        url: currentRepo.owner.html_url
         }
-      })
-      .catch((err) => {
-        console.log('ERROR SEARCHING DATABASE', err);
-      })
+      });
+
+      await newDocument.save();
+
+      reposSaved++;
+
+    } else {
+
+      console.log(`Repo ID ${currentID} already exists in the database`);
     }
-  // resolve the promise so the post request can continue now that all repos have been saved (or not saved)
-  resolve();
-  })
+  }
+  return `${reposSaved} new repos were saved`;
 }
 
-module.exports.save = save;
+let getTopRepos = async () => {
+  // use mongoose to get an array of all repos
+  var allRepos = await Repo.find();
+
+  // sort that array, comparing the number of forks of each repo
+  var sortedRepos = allRepos.sort((a,b) => {
+    return b.forks - a.forks;
+  })
+
+  // use slice to create a copy of the first 25 items in the array
+  var mostForkedRepos = sortedRepos.slice(0, 25);
+
+  // return top 25 repos
+  return mostForkedRepos;
+}
+
+exports.save = save;
+exports.getTopRepos = getTopRepos;

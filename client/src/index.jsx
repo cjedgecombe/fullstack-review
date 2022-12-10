@@ -4,6 +4,7 @@ import $ from 'jquery';
 import Search from './components/Search.jsx';
 import RepoList from './components/RepoList.jsx';
 const getReposByUsername = require('../../helpers/github.js');
+const axios = require('axios');
 
 class App extends React.Component {
   constructor(props) {
@@ -14,16 +15,19 @@ class App extends React.Component {
 
   }
 
+  componentDidMount() {
+    axios.get('http://localhost:1128/repos')
+    .then((top25Repos) => {
+      this.setState({repos: top25Repos.data});
+    })
+  }
+
   search (term) {
     console.log(`${term} was searched`);
 
-    $.ajax({
-      type: 'POST',
-      url: 'localhost:1128/repos',
-      data: term,
-      success: () => {
-        console.log('Repos Added!')
-      }
+    axios.post('http://localhost:1128/repos', {username: term})
+    .then(() => {
+      console.log('');
     })
   }
 
